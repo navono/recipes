@@ -37,10 +37,13 @@ static void echo_read_cb(struct bufferevent *bev, void *ctx)
 
 static void echo_event_cb(struct bufferevent *bev, short events, void *ctx)
 {
+  struct evbuffer *output = bufferevent_get_output(bev);
+  size_t remain = evbuffer_get_length(output);
   if (events & BEV_EVENT_ERROR) {
     perror("Error from bufferevent");
   }
   if (events & (BEV_EVENT_EOF | BEV_EVENT_ERROR)) {
+    printf("closing, remain %zd\n", remain);
     bufferevent_free(bev);
   }
 }
